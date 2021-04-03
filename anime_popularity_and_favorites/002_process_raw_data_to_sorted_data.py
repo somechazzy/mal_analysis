@@ -7,7 +7,8 @@ OUTPUT_FILE_PATH_SORTED_BY_TOTAL = "output/anime_popularity_and_favorites_sorted
 OUTPUT_FILE_PATH_SORTED_BY_COMPLETED = "output/anime_popularity_and_favorites_sorted_completed.json"
 OUTPUT_FILE_PATH_SORTED_BY_COMPLETED_PLUS_WATCHING = \
     "output/anime_popularity_and_favorites_sorted_completed_plus_watching.json"
-
+OUTPUT_FILE_PATH_SORTED_BY_COMPLETED_PLUS_WATCHING_WITH_MOVIES= \
+    "output/anime_popularity_and_favorites_sorted_completed_plus_watching_with_movies.json"
 
 def get_json_text():
     with open(INPUT_FILE_PATH, 'r') as file_in:
@@ -74,12 +75,12 @@ def get_sorted_by_total_anime_dict(_anime_entry_array: []):
     return sorted_dict
 
 
-def get_sorted_by_completed_plus_watching_anime_dict(_anime_entry_array: []):
+def get_sorted_by_completed_plus_watching_anime_dict(_anime_entry_array: [], with_movies=False):
     anime_entry_array_sorted = sorted(_anime_entry_array, key=lambda x: x.fav_to_completed_plus_watching, reverse=True)
     sorted_dict = {}
     index = 0
     for entry in anime_entry_array_sorted:
-        if entry.status == Status.YET_TO_AIR or entry.type_of_anime == AnimeType.MOVIE:
+        if entry.status == Status.YET_TO_AIR or (entry.type_of_anime == AnimeType.MOVIE and not with_movies):
             continue
         sorted_dict[index + 1] = entry.__dict__
         index += 1
@@ -92,6 +93,8 @@ anime_entry_array = populate_anime_array_from_dict(anime_dict)
 # sorted_completed_anime_dict = get_sorted_by_completed_anime_dict(anime_entry_array)
 sorted_total_anime_dict = get_sorted_by_total_anime_dict(anime_entry_array)
 sorted_completed_plus_watching_anime_dict = get_sorted_by_completed_plus_watching_anime_dict(anime_entry_array)
+sorted_completed_plus_watching_with_movies_anime_dict =\
+    get_sorted_by_completed_plus_watching_anime_dict(anime_entry_array, with_movies=True)
 
 # with open(OUTPUT_FILE_PATH_SORTED_BY_COMPLETED, 'w') as file_out:
 #     file_out.write(json.dumps(sorted_completed_anime_dict))
@@ -101,3 +104,6 @@ with open(OUTPUT_FILE_PATH_SORTED_BY_TOTAL, 'w') as file_out:
 
 with open(OUTPUT_FILE_PATH_SORTED_BY_COMPLETED_PLUS_WATCHING, 'w') as file_out:
     file_out.write(json.dumps(sorted_completed_plus_watching_anime_dict))
+
+with open(OUTPUT_FILE_PATH_SORTED_BY_COMPLETED_PLUS_WATCHING_WITH_MOVIES, 'w') as file_out:
+    file_out.write(json.dumps(sorted_completed_plus_watching_with_movies_anime_dict))
